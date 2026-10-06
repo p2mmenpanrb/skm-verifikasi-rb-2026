@@ -75,7 +75,7 @@
     gap:10px;
   }
 
-  input, textarea{
+  input, textarea, select{
     width:100%;
     border:1px solid #cfd5df;
     border-radius:7px;
@@ -85,7 +85,7 @@
     outline:none;
   }
 
-  input:focus, textarea:focus{
+  input:focus, textarea:focus, select:focus{
     border-color:#8aa6ef;
     box-shadow:0 0 0 2px #edf2ff;
   }
@@ -1044,11 +1044,9 @@
   <div class="panel search-panel">
     <div class="field-label">Pilih instansi</div>
     <div class="search-row">
-      <input id="institutionSearch"
-             list="institutionList"
-             value="Pemerintah Kota Bandung"
-             placeholder="Cari nama instansi">
-      <datalist id="institutionList"></datalist>
+      <select id="institutionSearch">
+        <option value="">Pilih instansi</option>
+      </select>
       <button class="btn btn-blue" onclick="loadInstitution()">Tampilkan</button>
     </div>
   </div>
@@ -1490,11 +1488,10 @@ let currentInstitutionId = null;
 let institutionIndex = {};
 
 async function loadInstitution(){
-  const name = document.getElementById('institutionSearch').value.trim();
-  const institutionId = institutionIndex[name] || name;
+  const institutionId = document.getElementById('institutionSearch').value;
 
   if(!institutionId){
-    alert('Silakan pilih instansi.');
+    alert('Silakan pilih instansi terlebih dahulu.');
     return;
   }
 
@@ -1809,11 +1806,8 @@ async function initializeApp(){
     setInstitutionList(data.institutions || []);
     setConsultationAvailability(data.consultationAvailability || []);
 
-    if(data.initialData){
-      renderInstitutionData(data.initialData);
-    }else{
-      renderEmptyState();
-    }
+    // Landing page stays blank until the user chooses an institution.
+    renderEmptyState();
 
     const overlay = document.getElementById('confirmOverlay');
     if(overlay){
@@ -1830,19 +1824,20 @@ async function initializeApp(){
 
 function setInstitutionList(institutions){
   institutionIndex = {};
-  const list = document.getElementById('institutionList');
-  list.innerHTML = '';
+  const select = document.getElementById('institutionSearch');
+
+  select.innerHTML = '<option value="">Pilih instansi</option>';
 
   institutions.forEach(inst => {
-    institutionIndex[inst.name] = inst.id;
+    institutionIndex[inst.id] = inst.name;
+
     const option = document.createElement('option');
-    option.value = inst.name;
-    list.appendChild(option);
+    option.value = inst.id;
+    option.textContent = inst.name;
+    select.appendChild(option);
   });
 
-  if(institutions.length){
-    document.getElementById('institutionSearch').value = institutions[0].name;
-  }
+  select.value = '';
 }
 
 function setConsultationAvailability(items){
@@ -1903,7 +1898,7 @@ function renderInstitutionData(data){
   if(!data || !data.institution) return;
 
   currentInstitutionId = data.institution.id;
-  document.getElementById('institutionSearch').value = data.institution.name;
+  document.getElementById('institutionSearch').value = data.institution.id;
   document.getElementById('institutionName').textContent = data.institution.name;
 
   const updated = data.lastUpdated || appConfig.DATA_LAST_UPDATED || '—';
@@ -2061,12 +2056,26 @@ function setAppBusy(isBusy){
 }
 
 function renderEmptyState(){
-  document.getElementById('institutionName').textContent = 'Belum ada instansi';
+  currentInstitutionId = null;
+
+  document.getElementById('institutionName').textContent = 'Belum ada instansi dipilih';
+  document.getElementById('lastUpdatedText').textContent = 'Pilih instansi untuk menampilkan data.';
   setStatusChip('Belum Diverifikasi');
+
   renderSummary({});
   renderServiceRows([]);
   renderSurveyLog([]);
   renderVerificationLog([]);
+
+  tableState.service.page = 1;
+  tableState.log.page = 1;
+
+  populateServiceFilters();
+  populateLogFilters();
+  renderPaginatedTable('service');
+  renderPaginatedTable('log');
+
+  cancelDecision();
 }
 
 function showServerError(error){
