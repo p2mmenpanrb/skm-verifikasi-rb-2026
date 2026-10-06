@@ -1,0 +1,2386 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Verifikasi Data Pelaksanaan SKM</title>
+<style>
+  :root{
+    --bg:#f7f8fa;
+    --surface:#ffffff;
+    --text:#182230;
+    --muted:#667085;
+    --line:#e6e9ef;
+    --blue:#2456d6;
+    --blue-soft:#f3f6ff;
+    --green:#0f8a5f;
+    --green-soft:#eaf7f1;
+    --red:#c7352b;
+    --red-soft:#fff0ee;
+    --amber:#b06b00;
+    --amber-soft:#fff7e8;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:14px;
+  }
+
+  .app{
+    max-width:1180px;
+    margin:0 auto;
+    padding:24px 22px 48px;
+  }
+
+  .page-head{
+    margin-bottom:18px;
+  }
+
+  .page-title{
+    font-size:24px;
+    font-weight:700;
+    margin:0 0 5px;
+  }
+
+  .page-sub{
+    color:var(--muted);
+    font-size:13px;
+    margin:0;
+  }
+
+  .panel{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:10px;
+  }
+
+  .search-panel{
+    padding:16px;
+    margin-bottom:14px;
+  }
+
+  .field-label{
+    font-size:12px;
+    font-weight:700;
+    color:#475467;
+    margin-bottom:7px;
+  }
+
+  .search-row{
+    display:flex;
+    gap:10px;
+  }
+
+  input, textarea{
+    width:100%;
+    border:1px solid #cfd5df;
+    border-radius:7px;
+    background:#fff;
+    padding:10px 11px;
+    font:inherit;
+    outline:none;
+  }
+
+  input:focus, textarea:focus{
+    border-color:#8aa6ef;
+    box-shadow:0 0 0 2px #edf2ff;
+  }
+
+  textarea{
+    resize:vertical;
+    min-height:78px;
+  }
+
+  .btn{
+    border:0;
+    border-radius:7px;
+    padding:10px 15px;
+    font-weight:700;
+    cursor:pointer;
+    font-size:13px;
+  }
+
+  .btn-blue{
+    background:var(--blue);
+    color:#fff;
+  }
+
+  .btn-light{
+    background:#f2f4f7;
+    color:#344054;
+  }
+
+  .institution-panel{
+    margin-bottom:14px;
+  }
+
+  .institution-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:18px;
+    padding:18px 18px 14px;
+    border-bottom:1px solid var(--line);
+  }
+
+  .institution-name{
+    font-size:19px;
+    font-weight:700;
+    margin-bottom:4px;
+  }
+
+  .institution-meta{
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .status-chip{
+    display:inline-block;
+    border-radius:999px;
+    padding:6px 10px;
+    font-size:12px;
+    font-weight:700;
+    background:var(--amber-soft);
+    color:var(--amber);
+  }
+
+  .decision-area{
+    padding:16px 18px 18px;
+  }
+
+  .decision-topline{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:10px;
+  }
+
+  .decision-title{
+    font-weight:700;
+    font-size:14px;
+  }
+
+  .deadline{
+    font-size:12px;
+    color:#8a5a00;
+    background:var(--amber-soft);
+    padding:5px 8px;
+    border-radius:6px;
+  }
+
+  .decision-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .decision-btn{
+    border-radius:8px;
+    padding:13px 16px;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    border:1px solid transparent;
+  }
+
+  .decision-btn.accept{
+    background:var(--green-soft);
+    color:var(--green);
+    border-color:#cdeadc;
+  }
+
+  .decision-btn.reject{
+    background:var(--red-soft);
+    color:var(--red);
+    border-color:#f0d1cd;
+  }
+
+  .decision-btn.accept.active{
+    background:var(--green);
+    color:#fff;
+  }
+
+  .decision-btn.reject.active{
+    background:var(--red);
+    color:#fff;
+  }
+
+  .decision-form{
+    display:none;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+
+  .decision-form.show{
+    display:block;
+  }
+
+  .reject-reason{
+    display:none;
+    margin-bottom:12px;
+  }
+
+  .consultation-card{
+    margin-top:14px;
+    border:1px solid #dfe4ec;
+    border-radius:9px;
+    background:#fbfcfd;
+    overflow:hidden;
+  }
+
+  .consultation-head{
+    padding:13px 14px 10px;
+  }
+
+  .consultation-title{
+    font-size:13px;
+    font-weight:700;
+    color:#344054;
+  }
+
+  .consultation-helper{
+    margin-top:3px;
+    color:var(--muted);
+    font-size:11px;
+    line-height:1.45;
+  }
+
+  .consultation-choice{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    padding:0 14px 14px;
+  }
+
+  .choice-card{
+    display:flex;
+    align-items:flex-start;
+    gap:9px;
+    padding:10px 11px;
+    border:1px solid #d0d5dd;
+    border-radius:8px;
+    background:#fff;
+    cursor:pointer;
+  }
+
+  .choice-card:has(input:checked){
+    border-color:#8aa6ef;
+    background:var(--blue-soft);
+  }
+
+  .choice-card input{
+    width:auto;
+    margin:2px 0 0;
+    accent-color:var(--blue);
+  }
+
+  .choice-card span{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+
+  .choice-card strong{
+    font-size:12px;
+    color:#344054;
+  }
+
+  .choice-card small{
+    font-size:11px;
+    color:var(--muted);
+    line-height:1.35;
+  }
+
+  .consultation-scheduler{
+    display:none;
+    border-top:1px solid #e7eaf0;
+    background:#fff;
+    padding:14px;
+  }
+
+  .consultation-scheduler.show{
+    display:block;
+  }
+
+  .scheduler-section + .scheduler-section{
+    margin-top:14px;
+  }
+
+  .date-options{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
+
+  .date-option{
+    text-align:left;
+    border:1px solid #d0d5dd;
+    background:#fff;
+    border-radius:8px;
+    padding:10px 11px;
+    cursor:pointer;
+    color:#344054;
+    font:inherit;
+  }
+
+  .date-option strong{
+    display:block;
+    font-size:12px;
+  }
+
+  .date-option span{
+    display:block;
+    margin-top:2px;
+    font-size:10px;
+    color:var(--muted);
+  }
+
+  .date-option.active{
+    border-color:var(--blue);
+    background:var(--blue-soft);
+    color:var(--blue);
+  }
+
+  .slot-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+
+  .slot-helper{
+    margin-top:-2px;
+    color:var(--muted);
+    font-size:10px;
+  }
+
+  .availability-badge{
+    flex:none;
+    font-size:10px;
+    font-weight:700;
+    color:var(--green);
+    background:var(--green-soft);
+    border-radius:999px;
+    padding:4px 7px;
+  }
+
+  .slot-options{
+    display:grid;
+    grid-template-columns:repeat(5,minmax(92px,1fr));
+    gap:7px;
+    margin-top:9px;
+  }
+
+  .slot-option{
+    border:1px solid #d0d5dd;
+    border-radius:7px;
+    background:#fff;
+    color:#344054;
+    padding:8px 7px;
+    font:inherit;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+
+  .slot-option:hover{
+    border-color:#9fb4ed;
+    background:#f8faff;
+  }
+
+  .slot-option.active{
+    border-color:var(--blue);
+    background:var(--blue);
+    color:#fff;
+  }
+
+  .selected-consultation{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:14px;
+    padding:9px 10px;
+    border-radius:7px;
+    background:var(--blue-soft);
+    font-size:11px;
+  }
+
+  .inline-link{
+    color:var(--blue);
+    text-decoration:none;
+    font-weight:700;
+  }
+
+  .inline-link:hover{
+    text-decoration:underline;
+  }
+
+  .confirm-zoom-meta{
+    display:block;
+    margin-top:3px;
+    color:var(--muted);
+    font-size:11px;
+    font-weight:400;
+  }
+
+  .selected-consultation span{
+    color:#52627a;
+  }
+
+  .selected-consultation strong{
+    color:var(--blue);
+    text-align:right;
+  }
+
+  .identity-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1.4fr;
+    gap:10px;
+  }
+
+  .form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:12px;
+  }
+
+  .section{
+    margin-top:14px;
+  }
+
+  .section-header{
+    padding:13px 16px;
+    font-weight:700;
+    border-bottom:1px solid var(--line);
+    background:#fbfcfd;
+    border-radius:10px 10px 0 0;
+  }
+
+  .summary{
+    padding:16px;
+  }
+
+  .summary-split{
+    display:grid;
+    grid-template-columns:0.9fr 1.5fr;
+    gap:18px;
+  }
+
+  .summary-block{
+    border:1px solid #eef0f3;
+    border-radius:8px;
+    overflow:hidden;
+    background:#fff;
+  }
+
+  .summary-block-title{
+    padding:10px 12px;
+    font-size:12px;
+    font-weight:700;
+    color:#475467;
+    background:#fbfcfd;
+    border-bottom:1px solid #eef0f3;
+  }
+
+  .summary-item{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:16px;
+    align-items:center;
+    min-height:46px;
+    padding:10px 12px;
+    border-bottom:1px solid #eef0f3;
+  }
+
+  .summary-item:last-child{
+    border-bottom:0;
+  }
+
+  .summary-label{
+    color:#5f6b7a;
+    font-size:13px;
+    line-height:1.35;
+  }
+
+  .summary-value{
+    font-weight:700;
+    font-size:15px;
+    text-align:right;
+    white-space:nowrap;
+  }
+
+  .table-filter{
+    display:grid;
+    grid-template-columns:1fr 1fr 1.4fr auto;
+    gap:10px;
+    padding:14px 16px;
+    border-bottom:1px solid var(--line);
+    background:#fff;
+  }
+
+  .table-filter select,
+  .table-filter input{
+    width:100%;
+    border:1px solid #cfd5df;
+    border-radius:7px;
+    background:#fff;
+    padding:9px 10px;
+    font:inherit;
+    outline:none;
+  }
+
+  .table-filter select:focus,
+  .table-filter input:focus{
+    border-color:#8aa6ef;
+    box-shadow:0 0 0 2px #edf2ff;
+  }
+
+  .filter-field{
+    min-width:0;
+  }
+
+  .filter-field .field-label{
+    margin-bottom:6px;
+  }
+
+  .filter-actions{
+    display:flex;
+    align-items:flex-end;
+  }
+
+  .before-cleanse{
+    background:#fbfcfd;
+  }
+
+  .after-cleanse{
+    background:var(--blue-soft);
+  }
+
+  th.before-cleanse{
+    color:#667085;
+    border-left:1px solid #eef0f3;
+  }
+
+  th.after-cleanse{
+    color:var(--blue);
+    background:var(--blue-soft);
+    border-left:1px solid #dbe4ff;
+  }
+
+  td.before-cleanse{
+    border-left:1px solid #f0f2f5;
+  }
+
+  td.after-cleanse{
+    border-left:1px solid #dbe4ff;
+  }
+
+  .cleanse-value{
+    font-weight:700;
+  }
+
+
+  .cleanse-legend{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    padding:10px 16px 0;
+    font-size:11px;
+    color:var(--muted);
+  }
+
+  .legend-item{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .legend-dot{
+    width:9px;
+    height:9px;
+    border-radius:2px;
+    border:1px solid #e4e7ec;
+    background:#fbfcfd;
+  }
+
+  .legend-dot.after{
+    background:var(--blue-soft);
+    border-color:#cfdcff;
+  }
+
+  .verification-overview{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    padding:12px 18px;
+    border-top:1px solid var(--line);
+    background:#fbfcfd;
+  }
+
+  .verification-label{
+    font-size:12px;
+    font-weight:700;
+    color:#475467;
+    margin-bottom:3px;
+  }
+
+  .verification-note,
+  .decision-helper{
+    font-size:12px;
+    line-height:1.45;
+    color:var(--muted);
+  }
+
+  .section-nav{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    padding:10px 18px 14px;
+    border-top:1px solid #eef0f3;
+  }
+
+  .section-nav a{
+    text-decoration:none;
+    color:#475467;
+    font-size:12px;
+    font-weight:700;
+    padding:7px 10px;
+    border-radius:6px;
+    background:#f2f4f7;
+  }
+
+  .section-nav a:hover{
+    background:#e9edf3;
+  }
+
+  .summary-total{
+    margin-top:2px;
+    border-top:1px solid #dfe3e8;
+    min-height:54px;
+  }
+
+  .summary-total .summary-label{
+    font-weight:700;
+    color:#344054;
+  }
+
+  .summary-total .summary-value{
+    font-size:17px;
+  }
+
+  .summary-total-after{
+    background:var(--blue-soft);
+  }
+
+  .summary-total-after .summary-value{
+    color:var(--blue);
+  }
+
+  .log-filter{
+    grid-template-columns:1fr 1fr 1.35fr 1fr 1fr auto;
+  }
+
+  #serviceTable td:nth-child(n+4),
+  #serviceTable th:nth-child(n+4),
+  #logSurveyTable td:nth-child(5),
+  #logSurveyTable th:nth-child(5){
+    text-align:right;
+    font-variant-numeric:tabular-nums;
+  }
+
+  #serviceTable td:nth-child(n+4){
+    white-space:nowrap;
+  }
+
+  table thead th{
+    position:sticky;
+    top:0;
+    z-index:2;
+  }
+
+  .confirm-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(16,24,40,.38);
+    z-index:1000;
+    padding:24px;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .confirm-overlay.show{
+    display:flex;
+  }
+
+  .confirm-modal{
+    width:min(560px,100%);
+    max-height:calc(100vh - 48px);
+    overflow:auto;
+    background:#fff;
+    border-radius:10px;
+    border:1px solid var(--line);
+    box-shadow:0 18px 50px rgba(16,24,40,.18);
+  }
+
+  .confirm-head{
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    padding:16px 18px;
+    border-bottom:1px solid var(--line);
+  }
+
+  .confirm-title{
+    font-size:16px;
+    font-weight:700;
+  }
+
+  .confirm-sub{
+    margin-top:3px;
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  .modal-close{
+    border:0;
+    background:transparent;
+    color:#667085;
+    font-size:24px;
+    line-height:1;
+    cursor:pointer;
+  }
+
+  .confirm-body{
+    padding:6px 18px;
+  }
+
+  .confirm-row{
+    display:grid;
+    grid-template-columns:150px 1fr;
+    gap:16px;
+    padding:11px 0;
+    border-bottom:1px solid #eef0f3;
+    font-size:13px;
+  }
+
+  .confirm-row:last-child{
+    border-bottom:0;
+  }
+
+  .confirm-row span{
+    color:var(--muted);
+  }
+
+  .confirm-row strong{
+    color:var(--text);
+    font-weight:700;
+    overflow-wrap:anywhere;
+  }
+
+  .confirm-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    padding:14px 18px;
+    border-top:1px solid var(--line);
+    background:#fbfcfd;
+  }
+
+  #keputusan .decision-area{
+    padding-top:18px;
+  }
+
+  #keputusan .decision-topline{
+    align-items:flex-start;
+  }
+
+  .table-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    padding:10px 16px;
+    border-bottom:1px solid var(--line);
+    background:#fff;
+  }
+
+  .table-toolbar-left,
+  .table-toolbar-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+
+  .page-size{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  .page-size select{
+    border:1px solid #cfd5df;
+    border-radius:7px;
+    padding:7px 28px 7px 9px;
+    background:#fff;
+    font:inherit;
+    color:var(--text);
+    outline:none;
+  }
+
+  .btn-export{
+    background:#fff;
+    color:#344054;
+    border:1px solid #cfd5df;
+  }
+
+  .btn-export:hover{
+    background:#f8fafc;
+  }
+
+  .pagination{
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+
+  .page-btn{
+    min-width:34px;
+    height:34px;
+    border:1px solid #d0d5dd;
+    background:#fff;
+    color:#344054;
+    border-radius:7px;
+    font:inherit;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    padding:0 10px;
+  }
+
+  .page-btn:hover:not(:disabled){
+    background:#f8fafc;
+  }
+
+  .page-btn.active{
+    background:var(--blue);
+    border-color:var(--blue);
+    color:#fff;
+  }
+
+  .page-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+  }
+
+  .page-info{
+    color:var(--muted);
+    font-size:12px;
+    white-space:nowrap;
+  }
+
+  .table-wrap{
+    overflow:auto;
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1180px;
+  }
+
+  th{
+    text-align:left;
+    padding:11px 12px;
+    font-size:11px;
+    color:#667085;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+    background:#fbfcfd;
+    border-bottom:1px solid var(--line);
+  }
+
+  td{
+    padding:12px;
+    border-bottom:1px solid #eef0f3;
+    vertical-align:top;
+    font-size:13px;
+  }
+
+  tr:last-child td{
+    border-bottom:0;
+  }
+
+  .tag{
+    display:inline-block;
+    padding:4px 7px;
+    border-radius:999px;
+    font-size:11px;
+    font-weight:700;
+  }
+
+  .tag-ok{
+    background:var(--green-soft);
+    color:var(--green);
+  }
+
+  .tag-warn{
+    background:var(--amber-soft);
+    color:var(--amber);
+  }
+
+  .tag-no{
+    background:var(--red-soft);
+    color:var(--red);
+  }
+
+  .toast{
+    display:none;
+    position:fixed;
+    right:20px;
+    bottom:20px;
+    background:#202939;
+    color:#fff;
+    border-radius:8px;
+    padding:11px 14px;
+    font-size:12px;
+    box-shadow:0 8px 22px rgba(0,0,0,.12);
+  }
+
+  .toast.show{display:block}
+
+  @media(max-width:850px){
+    .identity-grid{grid-template-columns:1fr}
+    .consultation-choice{grid-template-columns:1fr}
+    .date-options{grid-template-columns:1fr}
+    .slot-options{grid-template-columns:repeat(3,minmax(90px,1fr))}
+    .summary-split{grid-template-columns:1fr}
+    .table-filter,
+    .log-filter{grid-template-columns:1fr 1fr}
+    .verification-overview{align-items:flex-start;flex-direction:column}
+    .institution-head{flex-direction:column}
+    .decision-topline{align-items:flex-start;flex-direction:column}
+  }
+
+  @media(max-width:600px){
+    .search-row,
+    .decision-buttons{
+      display:grid;
+      grid-template-columns:1fr;
+    }
+
+    .summary-item{
+      grid-template-columns:1fr auto;
+    }
+
+    .table-filter,
+    .log-filter{
+      grid-template-columns:1fr;
+    }
+
+    .confirm-row{
+      grid-template-columns:1fr;
+      gap:4px;
+    }
+
+    .filter-actions .btn{
+      width:100%;
+    }
+
+    .slot-options{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .selected-consultation{
+      align-items:flex-start;
+      flex-direction:column;
+    }
+
+    .selected-consultation strong{
+      text-align:left;
+    }
+
+
+    .table-toolbar{
+      align-items:stretch;
+    }
+
+    .table-toolbar-left,
+    .table-toolbar-right{
+      width:100%;
+      justify-content:space-between;
+    }
+
+    .pagination{
+      flex-wrap:wrap;
+    }
+  }
+</style>
+</head>
+
+<body>
+<div class="app">
+
+  <div class="page-head">
+    <h1 class="page-title">Verifikasi Data Pelaksanaan SKM</h1>
+    <p class="page-sub">Evaluasi Reformasi Birokrasi Tahun 2026</p>
+  </div>
+
+  <div class="panel search-panel">
+    <div class="field-label">Pilih instansi</div>
+    <div class="search-row">
+      <input id="institutionSearch"
+             list="institutionList"
+             value="Pemerintah Kota Bandung"
+             placeholder="Cari nama instansi">
+      <datalist id="institutionList"></datalist>
+      <button class="btn btn-blue" onclick="loadInstitution()">Tampilkan</button>
+    </div>
+  </div>
+
+
+
+  <div class="panel institution-panel">
+    <div class="institution-head">
+      <div>
+        <div class="institution-name" id="institutionName">Pemerintah Kota Bandung</div>
+        <div class="institution-meta" id="lastUpdatedText">Data terakhir diperbarui: —</div>
+      </div>
+      <div class="status-chip" id="statusChip">Belum Diverifikasi</div>
+    </div>
+
+    <div class="verification-overview">
+      <div>
+        <div class="verification-label">Status Verifikasi</div>
+        <div class="verification-note">Tinjau data pada bagian di bawah sebelum menetapkan keputusan akhir.</div>
+      </div>
+      <div class="deadline" id="deadlineText">Batas keputusan: —</div>
+    </div>
+
+    <nav class="section-nav" aria-label="Navigasi verifikasi">
+      <a href="#ringkasan">Ringkasan</a>
+      <a href="#rincian">Rincian Data</a>
+      <a href="#log-survei">Log Survei</a>
+      <a href="#keputusan">Keputusan</a>
+    </nav>
+  </div>
+
+  <div class="panel section" id="ringkasan">
+    <div class="section-header">Ringkasan Data</div>
+    <div class="summary">
+      <div class="summary-split">
+
+        <div class="summary-block">
+          <div class="summary-block-title">Struktur Data Instansi</div>
+
+          <div class="summary-item">
+            <div class="summary-label">Level 0</div>
+            <div class="summary-value" id="sumLevel0">0</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Level 1</div>
+            <div class="summary-value" id="sumLevel1">0</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Level 2</div>
+            <div class="summary-value" id="sumLevel2">0</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Jenis Pelayanan</div>
+            <div class="summary-value" id="sumJenisPelayanan">0</div>
+          </div>
+        </div>
+
+        <div class="summary-block">
+          <div class="summary-block-title">Data Responden</div>
+
+          <div class="summary-item">
+            <div class="summary-label">Responden Survei Online</div>
+            <div class="summary-value" id="sumRespOnline">0</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Responden Survei Bulk Offline</div>
+            <div class="summary-value" id="sumRespBulkOffline">0</div>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-label">Responden Survei Bulk Pasca Cleansing</div>
+            <div class="summary-value" id="sumRespBulkPasca">0</div>
+          </div>
+
+          <div class="summary-item summary-total summary-total-before">
+            <div class="summary-label">Total Responden Sebelum Cleansing (Online + Bulk Offline)</div>
+            <div class="summary-value" id="sumTotalSebelum">0</div>
+          </div>
+
+          <div class="summary-item summary-total summary-total-after">
+            <div class="summary-label">Total Responden Pasca Cleansing (Online + Bulk Offline Pasca Cleansing)</div>
+            <div class="summary-value" id="sumTotalPasca">0</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="panel section" id="rincian">
+    <div class="section-header">Rincian Data per Pelayanan</div>
+
+    <div class="cleanse-legend">
+      <span class="legend-item"><span class="legend-dot"></span>Sebelum cleansing</span>
+      <span class="legend-item"><span class="legend-dot after"></span>Pasca cleansing</span>
+    </div>
+
+    <div class="table-filter">
+      <div class="filter-field">
+        <div class="field-label">Level 1</div>
+        <select id="filterLevel1" onchange="updateServiceLevel2Options(); applyServiceFilters()">
+          <option value="">Semua Level 1</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <div class="field-label">Level 2</div>
+        <select id="filterLevel2" onchange="applyServiceFilters()">
+          <option value="">Semua Level 2</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <div class="field-label">Nama Pelayanan</div>
+        <input id="filterService" type="text" placeholder="Cari nama pelayanan" oninput="applyServiceFilters()">
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-light" type="button" onclick="resetServiceFilters()">Reset</button>
+      </div>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="table-toolbar-left">
+        <div class="page-size">
+          <span>Tampilkan</span>
+          <select id="servicePageSize" onchange="changePageSize('service')">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+          <span>baris</span>
+        </div>
+        <div class="page-info" id="servicePageInfo">0 data</div>
+      </div>
+
+      <div class="table-toolbar-right">
+        <button class="btn btn-export" type="button" onclick="exportTableToExcel('serviceTable','Rincian_Data_Pelayanan_SKM.xls')">
+          Ekspor Excel
+        </button>
+        <div class="pagination" id="servicePagination"></div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="serviceTable">
+        <thead>
+          <tr>
+            <th>Level 1</th>
+            <th>Level 2</th>
+            <th>Nama Pelayanan</th>
+            <th>Resp Online</th>
+            <th class="before-cleanse">Resp Offline Sebelum Cleansing</th>
+            <th class="after-cleanse">Resp Online Pasca Cleansing</th>
+            <th class="before-cleanse">Total Responden Sebelum Cleansing</th>
+            <th class="after-cleanse">Total Responden Pasca Cleansing</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel section" id="log-survei">
+    <div class="section-header">Log Upload Bulk Survei Offline</div>
+
+    <div class="table-filter log-filter">
+      <div class="filter-field">
+        <div class="field-label">Level 1</div>
+        <select id="logFilterLevel1" onchange="updateLogLevel2Options(); applyLogFilters()">
+          <option value="">Semua Level 1</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <div class="field-label">Level 2</div>
+        <select id="logFilterLevel2" onchange="applyLogFilters()">
+          <option value="">Semua Level 2</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <div class="field-label">Nama Survei</div>
+        <input id="logFilterSurvey" type="text" placeholder="Cari nama survei" oninput="applyLogFilters()">
+      </div>
+
+      <div class="filter-field">
+        <div class="field-label">Approval Akun PJ</div>
+        <select id="logFilterApproval" onchange="applyLogFilters()">
+          <option value="">Semua Status</option>
+        </select>
+      </div>
+
+      <div class="filter-field">
+        <div class="field-label">Usulan Perubahan</div>
+        <select id="logFilterChange" onchange="applyLogFilters()">
+          <option value="">Semua Status</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="btn btn-light" type="button" onclick="resetLogFilters()">Reset</button>
+      </div>
+    </div>
+
+    <div class="table-toolbar">
+      <div class="table-toolbar-left">
+        <div class="page-size">
+          <span>Tampilkan</span>
+          <select id="logPageSize" onchange="changePageSize('log')">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+          <span>baris</span>
+        </div>
+        <div class="page-info" id="logPageInfo">0 data</div>
+      </div>
+
+      <div class="table-toolbar-right">
+        <button class="btn btn-export" type="button" onclick="exportTableToExcel('logSurveyTable','Log_Survei_Online_SKM.xls')">
+          Ekspor Excel
+        </button>
+        <div class="pagination" id="logPagination"></div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="logSurveyTable">
+        <thead>
+          <tr>
+            <th>Timestamp Unggah Survei</th>
+            <th>Level 1</th>
+            <th>Level 2</th>
+            <th>Nama Survei</th>
+            <th>Jumlah Responden</th>
+            <th>Status Approval Akun PJ</th>
+            <th>Status Usulan Perubahan</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel section" id="keputusan">
+    <div class="decision-area">
+      <div class="decision-topline">
+        <div><div class="decision-title">Tetapkan Keputusan Verifikasi</div><div class="decision-helper">Pastikan ringkasan, rincian data, dan log survei telah ditinjau. Jika data ditolak, konsultasi dengan Tim Kementerian PANRB dapat dijadwalkan pada slot yang tersedia.</div></div>
+        <div class="deadline">Batas keputusan: 7 Oktober 2026, 23.59 WIB</div>
+      </div>
+
+      <div class="decision-buttons">
+        <button class="decision-btn accept" id="acceptBtn" onclick="chooseDecision('Diterima')">
+          ✓ Terima Data
+        </button>
+        <button class="decision-btn reject" id="rejectBtn" onclick="chooseDecision('Ditolak')">
+          ✕ Tolak Data
+        </button>
+      </div>
+
+      <div class="decision-form" id="decisionForm">
+        <div class="reject-reason" id="rejectReason">
+          <div class="field-label">Alasan penolakan *</div>
+          <textarea id="reason" placeholder="Tuliskan alasan penolakan"></textarea>
+
+          <div class="consultation-card">
+            <div class="consultation-head">
+              <div>
+                <div class="consultation-title">Perlu konsultasi dengan Tim Kementerian PANRB?</div>
+                <div class="consultation-helper">
+                  Konsultasi bersifat opsional dan tidak mengubah status keputusan penolakan.
+                </div>
+              </div>
+            </div>
+
+            <div class="consultation-choice">
+              <label class="choice-card">
+                <input type="radio" name="consultationChoice" value="no" checked onchange="toggleConsultation(false)">
+                <span>
+                  <strong>Tidak</strong>
+                  <small>Lanjutkan penolakan tanpa konsultasi</small>
+                </span>
+              </label>
+
+              <label class="choice-card">
+                <input type="radio" name="consultationChoice" value="yes" onchange="toggleConsultation(true)">
+                <span>
+                  <strong>Ya</strong>
+                  <small>Jadwalkan konsultasi dengan tim kami</small>
+                </span>
+              </label>
+            </div>
+
+            <div class="consultation-scheduler" id="consultationScheduler">
+              <div class="scheduler-section">
+                <div class="field-label">Pilih tanggal konsultasi *</div>
+                <div class="date-options" id="consultationDates"></div>
+              </div>
+
+              <div class="scheduler-section" id="slotSection" style="display:none">
+                <div class="slot-heading">
+                  <div>
+                    <div class="field-label">Pilih waktu *</div>
+                    <div class="slot-helper">Durasi konsultasi 10 menit. Waktu dalam WIB.</div>
+                  </div>
+                  <span class="availability-badge">Slot tersedia</span>
+                </div>
+                <div class="slot-options" id="consultationSlots"></div>
+              </div>
+
+              <div class="selected-consultation" id="selectedConsultation" style="display:none">
+                <span>Jadwal dipilih</span>
+                <strong id="selectedConsultationText">—</strong>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+        <div class="identity-grid">
+          <div>
+            <div class="field-label">Nama *</div>
+            <input id="reviewerName" value="Rina Pratama">
+          </div>
+          <div>
+            <div class="field-label">NIP *</div>
+            <input id="reviewerNip" value="199001012018012001">
+          </div>
+          <div>
+            <div class="field-label">Unit Instansi *</div>
+            <input id="reviewerUnit" value="Asisten Deputi Pemberdayaan Partisipasi Publik">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-light" onclick="cancelDecision()">Batal</button>
+          <button class="btn btn-blue" id="continueDecisionBtn" onclick="saveDecision()">Lanjutkan</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="panel section" id="log-keputusan">
+    <div class="section-header">Log Keputusan</div>
+    <div class="table-wrap">
+      <table id="decisionLog">
+        <thead>
+          <tr>
+            <th>Waktu</th>
+            <th>Keputusan</th>
+            <th>Nama</th>
+            <th>NIP</th>
+            <th>Unit Instansi</th>
+            <th>Alasan</th>
+            <th>Konsultasi</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+  <div class="confirm-modal">
+    <div class="confirm-head">
+      <div>
+        <div class="confirm-title" id="confirmTitle">Konfirmasi Keputusan</div>
+        <div class="confirm-sub">Periksa kembali keputusan dan jadwal konsultasi sebelum disimpan.</div>
+      </div>
+      <button class="modal-close" type="button" onclick="closeDecisionConfirmation()" aria-label="Tutup">×</button>
+    </div>
+
+    <div class="confirm-body">
+      <div class="confirm-row">
+        <span>Instansi</span>
+        <strong id="confirmInstitution">—</strong>
+      </div>
+      <div class="confirm-row">
+        <span>Keputusan</span>
+        <strong id="confirmDecision">—</strong>
+      </div>
+      <div class="confirm-row">
+        <span>Nama</span>
+        <strong id="confirmName">—</strong>
+      </div>
+      <div class="confirm-row">
+        <span>NIP</span>
+        <strong id="confirmNip">—</strong>
+      </div>
+      <div class="confirm-row">
+        <span>Unit Instansi</span>
+        <strong id="confirmUnit">—</strong>
+      </div>
+      <div class="confirm-row" id="confirmReasonRow">
+        <span>Alasan Penolakan</span>
+        <strong id="confirmReason">—</strong>
+      </div>
+      <div class="confirm-row" id="confirmConsultationRow">
+        <span>Konsultasi</span>
+        <strong id="confirmConsultation">—</strong>
+      </div>
+      <div class="confirm-row" id="confirmZoomRow">
+        <span>Zoom</span>
+        <strong>
+          <a class="inline-link" id="confirmZoomLink" href="#" target="_blank" rel="noopener noreferrer">Buka Zoom</a>
+          <span class="confirm-zoom-meta" id="confirmZoomMeta">Meeting ID: — · Passcode: —<br>Gunakan tautan ini pada jadwal konsultasi yang dipilih.</span>
+        </strong>
+      </div>
+    </div>
+
+    <div class="confirm-actions">
+      <button class="btn btn-light" type="button" onclick="closeDecisionConfirmation()">Kembali</button>
+      <button class="btn btn-blue" id="confirmDecisionBtn" type="button" onclick="confirmDecision()">Konfirmasi</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Keputusan berhasil disimpan.</div>
+
+<script>
+let selectedDecision = null;
+let consultationRequested = false;
+let selectedConsultDate = null;
+let selectedConsultSlot = null;
+let consultationAvailability = {};
+let appConfig = {};
+let currentInstitutionId = null;
+let institutionIndex = {};
+
+async function loadInstitution(){
+  const name = document.getElementById('institutionSearch').value.trim();
+  const institutionId = institutionIndex[name] || name;
+
+  if(!institutionId){
+    alert('Silakan pilih instansi.');
+    return;
+  }
+
+  setAppBusy(true);
+
+  try{
+    const data = await apiGet('institution', { id: institutionId });
+    renderInstitutionData(data);
+  }catch(error){
+    showServerError(error);
+  }finally{
+    setAppBusy(false);
+  }
+}
+
+function chooseDecision(decision){
+  selectedDecision = decision;
+  document.getElementById('decisionForm').classList.add('show');
+  document.getElementById('acceptBtn').classList.toggle('active', decision === 'Diterima');
+  document.getElementById('rejectBtn').classList.toggle('active', decision === 'Ditolak');
+  document.getElementById('rejectReason').style.display = decision === 'Ditolak' ? 'block' : 'none';
+
+  if(decision === 'Diterima'){
+    document.getElementById('reason').value = '';
+    resetConsultation();
+  }else{
+    renderConsultationDates();
+  }
+}
+
+function cancelDecision(){
+  selectedDecision = null;
+  document.getElementById('decisionForm').classList.remove('show');
+  document.getElementById('acceptBtn').classList.remove('active');
+  document.getElementById('rejectBtn').classList.remove('active');
+  document.getElementById('reason').value = '';
+  resetConsultation();
+}
+
+function resetConsultation(){
+  consultationRequested = false;
+  selectedConsultDate = null;
+  selectedConsultSlot = null;
+
+  const noRadio = document.querySelector('input[name="consultationChoice"][value="no"]');
+  if(noRadio) noRadio.checked = true;
+
+  const scheduler = document.getElementById('consultationScheduler');
+  const slotSection = document.getElementById('slotSection');
+  const selectedBox = document.getElementById('selectedConsultation');
+
+  if(scheduler) scheduler.classList.remove('show');
+  if(slotSection) slotSection.style.display = 'none';
+  if(selectedBox) selectedBox.style.display = 'none';
+
+  document.querySelectorAll('.date-option,.slot-option').forEach(el => el.classList.remove('active'));
+}
+
+function toggleConsultation(show){
+  consultationRequested = show;
+  selectedConsultDate = null;
+  selectedConsultSlot = null;
+
+  document.getElementById('consultationScheduler').classList.toggle('show', show);
+  document.getElementById('slotSection').style.display = 'none';
+  document.getElementById('selectedConsultation').style.display = 'none';
+
+  if(show){
+    refreshConsultationAvailability();
+  }
+}
+
+function renderConsultationDates(){
+  const container = document.getElementById('consultationDates');
+  if(!container) return;
+
+  container.innerHTML = '';
+  const entries = Object.entries(consultationAvailability);
+
+  if(!entries.length){
+    container.innerHTML = '<div class="consultation-helper">Tidak ada slot konsultasi yang tersedia.</div>';
+    return;
+  }
+
+  entries.forEach(([dateKey, data]) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'date-option';
+    button.dataset.date = dateKey;
+    button.innerHTML = `<strong>${escapeHtml(data.label)}</strong><span>${data.slots.length} pilihan waktu tersedia</span>`;
+    button.addEventListener('click', () => selectConsultationDate(dateKey));
+    container.appendChild(button);
+  });
+}
+
+function selectConsultationDate(dateKey){
+  selectedConsultDate = dateKey;
+  selectedConsultSlot = null;
+
+  document.querySelectorAll('.date-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.date === dateKey);
+  });
+
+  const data = consultationAvailability[dateKey];
+  const slotContainer = document.getElementById('consultationSlots');
+  slotContainer.innerHTML = '';
+
+  data.slots.forEach(slot => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'slot-option';
+    button.dataset.slot = slot;
+    button.textContent = slot;
+    button.addEventListener('click', () => selectConsultationSlot(slot));
+    slotContainer.appendChild(button);
+  });
+
+  document.getElementById('slotSection').style.display = 'block';
+  document.getElementById('selectedConsultation').style.display = 'none';
+}
+
+function selectConsultationSlot(slot){
+  selectedConsultSlot = slot;
+
+  document.querySelectorAll('.slot-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.slot === slot);
+  });
+
+  const data = consultationAvailability[selectedConsultDate];
+  document.getElementById('selectedConsultationText').textContent =
+    `${data.label}, ${slot} WIB`;
+  document.getElementById('selectedConsultation').style.display = 'flex';
+}
+
+function getConsultationSummary(){
+  if(!consultationRequested) return 'Tidak dijadwalkan';
+  if(!selectedConsultDate || !selectedConsultSlot) return 'Belum lengkap';
+
+  const data = consultationAvailability[selectedConsultDate];
+  return `${data.label}, ${selectedConsultSlot} WIB`;
+}
+
+function saveDecision(){
+  if(!selectedDecision) return;
+  if(!currentInstitutionId){
+    alert('Silakan pilih instansi terlebih dahulu.');
+    return;
+  }
+
+  const name = document.getElementById('reviewerName').value.trim();
+  const nip = document.getElementById('reviewerNip').value.trim();
+  const unit = document.getElementById('reviewerUnit').value.trim();
+  const reason = document.getElementById('reason').value.trim();
+
+  if(!name || !nip || !unit){
+    alert('Nama, NIP, dan Unit Instansi wajib diisi.');
+    return;
+  }
+
+  if(selectedDecision === 'Ditolak' && !reason){
+    alert('Alasan penolakan wajib diisi.');
+    return;
+  }
+
+  if(selectedDecision === 'Ditolak' && consultationRequested &&
+     (!selectedConsultDate || !selectedConsultSlot)){
+    alert('Silakan pilih tanggal dan waktu konsultasi.');
+    return;
+  }
+
+  document.getElementById('confirmInstitution').textContent =
+    document.getElementById('institutionName').textContent.trim();
+  document.getElementById('confirmDecision').textContent = selectedDecision;
+  document.getElementById('confirmName').textContent = name;
+  document.getElementById('confirmNip').textContent = nip;
+  document.getElementById('confirmUnit').textContent = unit;
+  document.getElementById('confirmReason').textContent = reason || '-';
+
+  const isRejected = selectedDecision === 'Ditolak';
+  document.getElementById('confirmReasonRow').style.display = isRejected ? 'grid' : 'none';
+  document.getElementById('confirmConsultationRow').style.display = isRejected ? 'grid' : 'none';
+  document.getElementById('confirmConsultation').textContent =
+    isRejected ? getConsultationSummary() : '—';
+  document.getElementById('confirmZoomRow').style.display =
+    isRejected && consultationRequested ? 'grid' : 'none';
+
+  const confirmBtn = document.getElementById('confirmDecisionBtn');
+
+  if(selectedDecision === 'Diterima'){
+    confirmBtn.textContent = 'Konfirmasi Terima Data';
+  }else if(consultationRequested){
+    confirmBtn.textContent = 'Konfirmasi Penolakan & Jadwal';
+  }else{
+    confirmBtn.textContent = 'Konfirmasi Penolakan';
+  }
+
+  document.getElementById('confirmOverlay').classList.add('show');
+}
+
+function closeDecisionConfirmation(){
+  document.getElementById('confirmOverlay').classList.remove('show');
+}
+
+function formatDecisionTimestamp(date){
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const day = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  const hour = String(date.getHours()).padStart(2,'0');
+  const minute = String(date.getMinutes()).padStart(2,'0');
+  return `${day} ${month} ${year}, ${hour}.${minute}`;
+}
+
+async function confirmDecision(){
+  const name = document.getElementById('reviewerName').value.trim();
+  const nip = document.getElementById('reviewerNip').value.trim();
+  const unit = document.getElementById('reviewerUnit').value.trim();
+  const reason = document.getElementById('reason').value.trim();
+
+  const payload = {
+    institutionId: currentInstitutionId,
+    decision: selectedDecision,
+    name,
+    nip,
+    unit,
+    reason,
+    consultationRequested: selectedDecision === 'Ditolak' && consultationRequested,
+    consultationDate: selectedConsultDate || '',
+    consultationTime: selectedConsultSlot || ''
+  };
+
+  const button = document.getElementById('confirmDecisionBtn');
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Menyimpan...';
+
+  try{
+    const result = await apiPost('saveVerification', payload);
+
+    closeDecisionConfirmation();
+
+    const toast = document.getElementById('toast');
+    toast.textContent = result.consultation
+      ? 'Keputusan dan jadwal konsultasi berhasil disimpan.'
+      : 'Keputusan berhasil disimpan.';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2600);
+
+    cancelDecision();
+
+    const data = await apiGet('institution', { id: currentInstitutionId });
+    renderInstitutionData(data);
+  }catch(error){
+    closeDecisionConfirmation();
+    showServerError(error);
+    await refreshConsultationAvailability();
+  }finally{
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+}
+
+
+
+const API_ENDPOINT = '/.netlify/functions/skm-api';
+
+async function apiGet(action, params = {}){
+  const query = new URLSearchParams({ action, ...params });
+  const response = await fetch(`${API_ENDPOINT}?${query.toString()}`, {
+    method: 'GET',
+    headers: { 'Accept': 'application/json' }
+  });
+  return parseApiResponse(response);
+}
+
+async function apiPost(action, payload = {}){
+  const response = await fetch(API_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({ action, payload })
+  });
+  return parseApiResponse(response);
+}
+
+async function parseApiResponse(response){
+  let body;
+  try{
+    body = await response.json();
+  }catch(error){
+    throw new Error('Backend mengembalikan respons yang tidak valid.');
+  }
+
+  if(!response.ok || !body.ok){
+    throw new Error(body.message || `Permintaan gagal (${response.status}).`);
+  }
+
+  return body.data;
+}
+
+async function initializeApp(){
+  setAppBusy(true);
+
+  try{
+    const data = await apiGet('bootstrap');
+
+    appConfig = data.config || {};
+    setZoomConfig(appConfig);
+    setDeadlineConfig(appConfig);
+    setInstitutionList(data.institutions || []);
+    setConsultationAvailability(data.consultationAvailability || []);
+
+    if(data.initialData){
+      renderInstitutionData(data.initialData);
+    }else{
+      renderEmptyState();
+    }
+
+    const overlay = document.getElementById('confirmOverlay');
+    if(overlay){
+      overlay.addEventListener('click', event => {
+        if(event.target.id === 'confirmOverlay') closeDecisionConfirmation();
+      });
+    }
+  }catch(error){
+    showServerError(error);
+  }finally{
+    setAppBusy(false);
+  }
+}
+
+function setInstitutionList(institutions){
+  institutionIndex = {};
+  const list = document.getElementById('institutionList');
+  list.innerHTML = '';
+
+  institutions.forEach(inst => {
+    institutionIndex[inst.name] = inst.id;
+    const option = document.createElement('option');
+    option.value = inst.name;
+    list.appendChild(option);
+  });
+
+  if(institutions.length){
+    document.getElementById('institutionSearch').value = institutions[0].name;
+  }
+}
+
+function setConsultationAvailability(items){
+  consultationAvailability = {};
+
+  (items || []).forEach(item => {
+    consultationAvailability[item.date] = {
+      label: item.label,
+      shortLabel: item.label,
+      slots: (item.slots || []).map(slot => slot.time)
+    };
+  });
+
+  if(consultationRequested) renderConsultationDates();
+}
+
+async function refreshConsultationAvailability(){
+  const container = document.getElementById('consultationDates');
+  if(container){
+    container.innerHTML = '<div class="consultation-helper">Memuat slot tersedia...</div>';
+  }
+
+  try{
+    const items = await apiGet('availability');
+    setConsultationAvailability(items || []);
+    renderConsultationDates();
+  }catch(error){
+    showServerError(error);
+    if(container){
+      container.innerHTML = '<div class="consultation-helper">Gagal memuat slot konsultasi.</div>';
+    }
+  }
+}
+
+function setZoomConfig(config){
+  const link = document.getElementById('confirmZoomLink');
+  const meta = document.getElementById('confirmZoomMeta');
+
+  if(link){
+    link.href = config.ZOOM_URL || '#';
+  }
+  if(meta){
+    meta.innerHTML =
+      `Meeting ID: ${escapeHtml(String(config.ZOOM_MEETING_ID || '—'))} · ` +
+      `Passcode: ${escapeHtml(String(config.ZOOM_PASSCODE || '—'))}` +
+      '<br>Gunakan tautan ini pada jadwal konsultasi yang dipilih.';
+  }
+}
+
+function setDeadlineConfig(config){
+  const el = document.getElementById('deadlineText');
+  if(el){
+    el.textContent = `Batas keputusan: ${config.DECISION_DEADLINE || '—'}`;
+  }
+}
+
+function renderInstitutionData(data){
+  if(!data || !data.institution) return;
+
+  currentInstitutionId = data.institution.id;
+  document.getElementById('institutionSearch').value = data.institution.name;
+  document.getElementById('institutionName').textContent = data.institution.name;
+
+  const updated = data.lastUpdated || appConfig.DATA_LAST_UPDATED || '—';
+  document.getElementById('lastUpdatedText').textContent =
+    `Data terakhir diperbarui: ${updated}`;
+
+  setStatusChip(data.status || 'Belum Diverifikasi');
+  renderSummary(data.summary || {});
+  renderServiceRows(data.details || []);
+  renderSurveyLog(data.surveyLog || []);
+  renderVerificationLog(data.verificationLog || []);
+
+  resetFiltersAfterDataLoad();
+  cancelDecision();
+}
+
+function renderSummary(summary){
+  setText('sumLevel0', formatNumber(summary.level0));
+  setText('sumLevel1', formatNumber(summary.level1));
+  setText('sumLevel2', formatNumber(summary.level2));
+  setText('sumJenisPelayanan', formatNumber(summary.jenisPelayanan));
+  setText('sumRespOnline', formatNumber(summary.respOnline));
+  setText('sumRespBulkOffline', formatNumber(summary.respBulkOffline));
+  setText('sumRespBulkPasca', formatNumber(summary.respBulkPasca));
+  setText('sumTotalSebelum', formatNumber(summary.totalSebelum));
+  setText('sumTotalPasca', formatNumber(summary.totalPasca));
+}
+
+function renderServiceRows(rows){
+  const tbody = document.querySelector('#serviceTable tbody');
+  tbody.innerHTML = '';
+
+  if(!rows.length){
+    tbody.innerHTML = '<tr><td colspan="8">Tidak ada rincian data.</td></tr>';
+    return;
+  }
+
+  rows.forEach(item => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${escapeHtml(item.level1 || '')}</td>
+      <td>${escapeHtml(item.level2 || '')}</td>
+      <td>${escapeHtml(item.namaPelayanan || '')}</td>
+      <td>${formatNumber(item.respOnline)}</td>
+      <td class="before-cleanse"><span class="cleanse-value">${formatNumber(item.respOfflineSebelum)}</span></td>
+      <td class="after-cleanse"><span class="cleanse-value">${formatNumber(item.respOfflinePasca)}</span></td>
+      <td class="before-cleanse"><span class="cleanse-value">${formatNumber(item.totalSebelum)}</span></td>
+      <td class="after-cleanse"><span class="cleanse-value">${formatNumber(item.totalPasca)}</span></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function renderSurveyLog(rows){
+  const tbody = document.querySelector('#logSurveyTable tbody');
+  tbody.innerHTML = '';
+
+  if(!rows.length){
+    tbody.innerHTML = '<tr><td colspan="7">Belum ada log survei online.</td></tr>';
+    return;
+  }
+
+  rows.forEach(item => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${escapeHtml(item.timestamp || '')}</td>
+      <td>${escapeHtml(item.level1 || '')}</td>
+      <td>${escapeHtml(item.level2 || '')}</td>
+      <td>${escapeHtml(item.namaSurvei || '')}</td>
+      <td>${formatNumber(item.jumlahResponden)}</td>
+      <td><span class="tag ${statusTagClass(item.statusApproval)}">${escapeHtml(item.statusApproval || '-')}</span></td>
+      <td><span class="tag ${statusTagClass(item.statusPerubahan)}">${escapeHtml(item.statusPerubahan || '-')}</span></td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function renderVerificationLog(rows){
+  const tbody = document.querySelector('#decisionLog tbody');
+  tbody.innerHTML = '';
+
+  if(!rows.length){
+    tbody.innerHTML = `
+      <tr>
+        <td>Belum ada keputusan</td><td>—</td><td>—</td><td>—</td>
+        <td>—</td><td>—</td><td>—</td>
+      </tr>`;
+    return;
+  }
+
+  rows.slice().reverse().forEach(item => {
+    const decisionClass = item.keputusan === 'Diterima' ? 'tag-ok' : 'tag-no';
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${escapeHtml(item.timestamp || '')}</td>
+      <td><span class="tag ${decisionClass}">${escapeHtml(item.keputusan || '-')}</span></td>
+      <td>${escapeHtml(item.nama || '')}</td>
+      <td>${escapeHtml(item.nip || '')}</td>
+      <td>${escapeHtml(item.unit || '')}</td>
+      <td>${escapeHtml(item.alasan || '-')}</td>
+      <td>${renderConsultationLogCell(item.konsultasi)}</td>
+    `;
+    tbody.appendChild(row);
+  });
+}
+
+function renderConsultationLogCell(value){
+  const text = String(value || 'Tidak dijadwalkan');
+  if(text === 'Tidak dijadwalkan') return escapeHtml(text);
+
+  const zoom = appConfig.ZOOM_URL || '#';
+  return `
+    <span class="tag tag-warn">Terjadwal</span>
+    <div style="margin-top:5px">${escapeHtml(text)}</div>
+    <div style="margin-top:5px">
+      <a class="inline-link" href="${escapeHtml(zoom)}" target="_blank" rel="noopener noreferrer">Buka Zoom</a>
+    </div>`;
+}
+
+function resetFiltersAfterDataLoad(){
+  tableState.service.page = 1;
+  tableState.log.page = 1;
+
+  document.getElementById('filterService').value = '';
+  document.getElementById('logFilterSurvey').value = '';
+
+  populateServiceFilters();
+  populateLogFilters();
+  renderPaginatedTable('service');
+  renderPaginatedTable('log');
+}
+
+function setStatusChip(status){
+  const chip = document.getElementById('statusChip');
+  chip.textContent = status;
+
+  if(status === 'Diterima'){
+    chip.style.background = '#eaf7f1';
+    chip.style.color = '#0f8a5f';
+  }else if(status === 'Ditolak'){
+    chip.style.background = '#fff0ee';
+    chip.style.color = '#c7352b';
+  }else{
+    chip.style.background = '#fff7e8';
+    chip.style.color = '#b06b00';
+  }
+}
+
+function setAppBusy(isBusy){
+  const button = document.querySelector('.search-panel .btn-blue');
+  if(button){
+    button.disabled = isBusy;
+    button.textContent = isBusy ? 'Memuat...' : 'Tampilkan';
+  }
+}
+
+function renderEmptyState(){
+  document.getElementById('institutionName').textContent = 'Belum ada instansi';
+  setStatusChip('Belum Diverifikasi');
+  renderSummary({});
+  renderServiceRows([]);
+  renderSurveyLog([]);
+  renderVerificationLog([]);
+}
+
+function showServerError(error){
+  const message = error && error.message ? error.message : String(error || 'Terjadi kesalahan.');
+  alert(message);
+}
+
+function setText(id, value){
+  const el = document.getElementById(id);
+  if(el) el.textContent = value == null ? '' : value;
+}
+
+function formatNumber(value){
+  const num = Number(value || 0);
+  return new Intl.NumberFormat('id-ID').format(Number.isFinite(num) ? num : 0);
+}
+
+function statusTagClass(value){
+  const text = String(value || '').toLowerCase();
+  if(text.includes('tolak')) return 'tag-no';
+  if(text.includes('menunggu') || text.includes('belum') || text.includes('perlu')) return 'tag-warn';
+  return 'tag-ok';
+}
+
+const tableState = {
+  service: { page: 1, pageSize: 10 },
+  log: { page: 1, pageSize: 10 }
+};
+
+function setSelectOptions(select, values, firstLabel){
+  const current = select.value;
+  select.innerHTML = `<option value="">${firstLabel}</option>`;
+  values.forEach(value => {
+    const option = document.createElement('option');
+    option.value = value;
+    option.textContent = value;
+    select.appendChild(option);
+  });
+  if(values.includes(current)) select.value = current;
+}
+
+function populateServiceFilters(){
+  const rows = Array.from(document.querySelectorAll('#serviceTable tbody tr'))
+    .filter(row => row.cells.length >= 8);
+  const level1 = [...new Set(rows.map(row => row.cells[0].textContent.trim()))].sort();
+  setSelectOptions(document.getElementById('filterLevel1'), level1, 'Semua Level 1');
+  updateServiceLevel2Options();
+}
+
+function updateServiceLevel2Options(){
+  const selectedLevel1 = document.getElementById('filterLevel1').value;
+  const rows = Array.from(document.querySelectorAll('#serviceTable tbody tr'))
+    .filter(row => row.cells.length >= 8);
+  const level2 = [...new Set(
+    rows
+      .filter(row => !selectedLevel1 || row.cells[0].textContent.trim() === selectedLevel1)
+      .map(row => row.cells[1].textContent.trim())
+  )].sort();
+
+  setSelectOptions(document.getElementById('filterLevel2'), level2, 'Semua Level 2');
+}
+
+function getFilteredServiceRows(){
+  const level1 = document.getElementById('filterLevel1').value.toLowerCase();
+  const level2 = document.getElementById('filterLevel2').value.toLowerCase();
+  const service = document.getElementById('filterService').value.trim().toLowerCase();
+
+  return Array.from(document.querySelectorAll('#serviceTable tbody tr'))
+    .filter(row => row.cells.length >= 8)
+    .filter(row => {
+    const rowLevel1 = row.cells[0].textContent.trim().toLowerCase();
+    const rowLevel2 = row.cells[1].textContent.trim().toLowerCase();
+    const rowService = row.cells[2].textContent.trim().toLowerCase();
+
+    return (!level1 || rowLevel1 === level1) &&
+           (!level2 || rowLevel2 === level2) &&
+           (!service || rowService.includes(service));
+  });
+}
+
+function applyServiceFilters(){
+  tableState.service.page = 1;
+  renderPaginatedTable('service');
+}
+
+function resetServiceFilters(){
+  document.getElementById('filterLevel1').value = '';
+  document.getElementById('filterService').value = '';
+  updateServiceLevel2Options();
+  document.getElementById('filterLevel2').value = '';
+  tableState.service.page = 1;
+  renderPaginatedTable('service');
+}
+
+function populateLogFilters(){
+  const rows = Array.from(document.querySelectorAll('#logSurveyTable tbody tr'))
+    .filter(row => row.cells.length >= 7);
+  const level1 = [...new Set(rows.map(row => row.cells[1].textContent.trim()))].sort();
+  const approval = [...new Set(rows.map(row => row.cells[5].textContent.trim()))].sort();
+  const change = [...new Set(rows.map(row => row.cells[6].textContent.trim()))].sort();
+
+  setSelectOptions(document.getElementById('logFilterLevel1'), level1, 'Semua Level 1');
+  setSelectOptions(document.getElementById('logFilterApproval'), approval, 'Semua Status');
+  setSelectOptions(document.getElementById('logFilterChange'), change, 'Semua Status');
+  updateLogLevel2Options();
+}
+
+function updateLogLevel2Options(){
+  const selectedLevel1 = document.getElementById('logFilterLevel1').value;
+  const rows = Array.from(document.querySelectorAll('#logSurveyTable tbody tr'))
+    .filter(row => row.cells.length >= 7);
+  const level2 = [...new Set(
+    rows
+      .filter(row => !selectedLevel1 || row.cells[1].textContent.trim() === selectedLevel1)
+      .map(row => row.cells[2].textContent.trim())
+  )].sort();
+
+  setSelectOptions(document.getElementById('logFilterLevel2'), level2, 'Semua Level 2');
+}
+
+function getFilteredLogRows(){
+  const level1 = document.getElementById('logFilterLevel1').value.toLowerCase();
+  const level2 = document.getElementById('logFilterLevel2').value.toLowerCase();
+  const survey = document.getElementById('logFilterSurvey').value.trim().toLowerCase();
+  const approval = document.getElementById('logFilterApproval').value.toLowerCase();
+  const change = document.getElementById('logFilterChange').value.toLowerCase();
+
+  return Array.from(document.querySelectorAll('#logSurveyTable tbody tr'))
+    .filter(row => row.cells.length >= 7)
+    .filter(row => {
+    const rowLevel1 = row.cells[1].textContent.trim().toLowerCase();
+    const rowLevel2 = row.cells[2].textContent.trim().toLowerCase();
+    const rowSurvey = row.cells[3].textContent.trim().toLowerCase();
+    const rowApproval = row.cells[5].textContent.trim().toLowerCase();
+    const rowChange = row.cells[6].textContent.trim().toLowerCase();
+
+    return (!level1 || rowLevel1 === level1) &&
+           (!level2 || rowLevel2 === level2) &&
+           (!survey || rowSurvey.includes(survey)) &&
+           (!approval || rowApproval === approval) &&
+           (!change || rowChange === change);
+  });
+}
+
+function applyLogFilters(){
+  tableState.log.page = 1;
+  renderPaginatedTable('log');
+}
+
+function resetLogFilters(){
+  document.getElementById('logFilterLevel1').value = '';
+  document.getElementById('logFilterSurvey').value = '';
+  document.getElementById('logFilterApproval').value = '';
+  document.getElementById('logFilterChange').value = '';
+  updateLogLevel2Options();
+  document.getElementById('logFilterLevel2').value = '';
+  tableState.log.page = 1;
+  renderPaginatedTable('log');
+}
+
+function changePageSize(type){
+  const select = document.getElementById(type === 'service' ? 'servicePageSize' : 'logPageSize');
+  tableState[type].pageSize = Number(select.value);
+  tableState[type].page = 1;
+  renderPaginatedTable(type);
+}
+
+function getRowsForType(type){
+  return type === 'service' ? getFilteredServiceRows() : getFilteredLogRows();
+}
+
+function changePage(type, page){
+  const state = tableState[type];
+  const rows = getRowsForType(type);
+  const totalPages = Math.max(1, Math.ceil(rows.length / state.pageSize));
+  state.page = Math.min(Math.max(1, page), totalPages);
+  renderPaginatedTable(type);
+}
+
+function renderPaginatedTable(type){
+  const isService = type === 'service';
+  const tableSelector = isService ? '#serviceTable' : '#logSurveyTable';
+  const rows = getRowsForType(type);
+
+  const allRows = Array.from(document.querySelectorAll(`${tableSelector} tbody tr`));
+  allRows.forEach(row => row.style.display = 'none');
+
+  const state = tableState[type];
+  const totalRows = rows.length;
+  const totalPages = Math.max(1, Math.ceil(totalRows / state.pageSize));
+
+  if(state.page > totalPages) state.page = totalPages;
+
+  const startIndex = (state.page - 1) * state.pageSize;
+  const endIndex = Math.min(startIndex + state.pageSize, totalRows);
+
+  rows.slice(startIndex, endIndex).forEach(row => row.style.display = '');
+
+  const info = document.getElementById(isService ? 'servicePageInfo' : 'logPageInfo');
+  info.textContent = totalRows === 0
+    ? '0 data'
+    : `${startIndex + 1}–${endIndex} dari ${totalRows} data`;
+
+  renderPagination(type, totalPages);
+}
+
+function renderPagination(type, totalPages){
+  const container = document.getElementById(type === 'service' ? 'servicePagination' : 'logPagination');
+  const current = tableState[type].page;
+  container.innerHTML = '';
+
+  const prev = document.createElement('button');
+  prev.type = 'button';
+  prev.className = 'page-btn';
+  prev.textContent = '‹';
+  prev.disabled = current === 1;
+  prev.onclick = () => changePage(type, current - 1);
+  container.appendChild(prev);
+
+  getPaginationRange(current, totalPages).forEach(item => {
+    if(item === '…'){
+      const span = document.createElement('span');
+      span.className = 'page-info';
+      span.textContent = '…';
+      container.appendChild(span);
+      return;
+    }
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'page-btn' + (item === current ? ' active' : '');
+    btn.textContent = item;
+    btn.onclick = () => changePage(type, item);
+    container.appendChild(btn);
+  });
+
+  const next = document.createElement('button');
+  next.type = 'button';
+  next.className = 'page-btn';
+  next.textContent = '›';
+  next.disabled = current === totalPages;
+  next.onclick = () => changePage(type, current + 1);
+  container.appendChild(next);
+}
+
+function getPaginationRange(current, total){
+  if(total <= 7) return Array.from({length: total}, (_, i) => i + 1);
+  if(current <= 4) return [1,2,3,4,5,'…',total];
+  if(current >= total - 3) return [1,'…',total-4,total-3,total-2,total-1,total];
+  return [1,'…',current-1,current,current+1,'…',total];
+}
+
+function exportTableToExcel(tableId, fileName){
+  const table = document.getElementById(tableId);
+  if(!table) return;
+
+  const clone = table.cloneNode(true);
+  Array.from(clone.querySelectorAll('tbody tr')).forEach(row => row.style.display = '');
+
+  const sourceRows = tableId === 'serviceTable'
+    ? getFilteredServiceRows()
+    : getFilteredLogRows();
+
+  const includedIndexes = new Set(
+    sourceRows.map(row => Array.from(row.parentNode.children).indexOf(row))
+  );
+
+  Array.from(clone.querySelectorAll('tbody tr')).forEach((row, index) => {
+    if(!includedIndexes.has(index)) row.remove();
+  });
+
+  clone.querySelectorAll('*').forEach(el => {
+    el.removeAttribute('style');
+    el.removeAttribute('class');
+    el.removeAttribute('id');
+  });
+
+  const excelHtml = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:x="urn:schemas-microsoft-com:office:excel"
+          xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          table { border-collapse: collapse; }
+          th, td { border: 1px solid #bfc5ce; padding: 6px 8px; }
+          th { font-weight: bold; background: #f2f4f7; }
+        </style>
+      </head>
+      <body>${clone.outerHTML}</body>
+    </html>`;
+
+  const blob = new Blob(['\ufeff', excelHtml], {type: 'application/vnd.ms-excel;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+document.addEventListener('DOMContentLoaded', initializeApp);
+
+function escapeHtml(text){
+  return text.replace(/[&<>"']/g, char => ({
+    '&':'&amp;',
+    '<':'&lt;',
+    '>':'&gt;',
+    '"':'&quot;',
+    "'":'&#039;'
+  })[char]);
+}
+</script>
+</body>
+</html>
